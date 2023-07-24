@@ -1,5 +1,5 @@
 const queries = new URLSearchParams(window.location.search);
-
+alert("loaded")
 function loadDom() {
   return new Promise((resolve) => {
     window.addEventListener("load", (e) => {
