@@ -1,34 +1,39 @@
-import { useState } from 'preact/hooks'
-import preactLogo from './assets/preact.svg'
-import viteLogo from '/vite.svg'
-import './app.css'
+import { useState, useEffect } from 'preact/hooks'
 import './tailwind.css'
 
-export function App() {
-  const [count, setCount] = useState(0)
+import Header from "./components/Header.tsx"
 
+export function App() {
+  const [viewerState, setViewerState] = useState("loding")
+  
+  const url = new URL(location.href)
+  const params = url.searchParams
+  const id = params.get('id') // Project ID
+  if ((!id) || (!parseInt(id))) {
+    // There isn't ID...
+    alert('Error: Please specify ID')
+    params.delete('id')
+    params.append('id', '854461630')
+    const newURL = new URL(location.href)
+    newURL.search = params
+    location.href = newURL.href
+  }
+  useEffect(() => {
+    ;(async () => 
+      const trampolineResult = await fetch(`https://trampoline.turbowarp.org/api/projects/${id}`).then(res=>res.json())
+      if (trampolineResult.error === "Resource does not exist") {
+        alert('Resource does not exist...')
+      }
+      const token = trampolineResult.project_token
+      
+    })()
+  }, [])
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} class="logo" alt="Vite logo" />
-        </a>
-        <a href="https://preactjs.com" target="_blank">
-          <img src={preactLogo} class="logo preact" alt="Preact logo" />
-        </a>
+        <Header label={viewerState}/>
+        
       </div>
-      <h1>Vite + Preact</h1>
-      <div class="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/app.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p class="read-the-docs">
-        Click on the Vite and Preact logos to learn more
-      </p>
     </>
   )
 }
